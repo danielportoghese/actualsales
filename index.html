@@ -75,21 +75,29 @@
                                     <div class="row form-group">
                                         <div class="col-lg-6">
                                             <label>Região</label>
-                                            <select class="form-control" name="regiao">
+                                            <select class="form-control" name="regiao" id="regiao">
                                                 <option value="">Selecione a sua região</option>
-                                                <option>Sul</option>
-                                                <option>Sudeste</option>
-                                                <option>Centro-Oeste</option>
-                                                <option>Nordeste</option>
-                                                <option>Norte</option>
+                                                <option value="sul">Sul</option>
+                                                <option value="sudeste">Sudeste</option>
+                                                <option value="centro-oeste">Centro-Oeste</option>
+                                                <option value="nordeste">Nordeste</option>
+                                                <option value="norte">Norte</option>
                                             </select>
                                         </div>
 
                                         <div class="col-lg-6">
                                             <label>Unidade</label>
-                                            <select class="form-control" name="unidade">
+                                            <select class="form-control" name="unidade" id="unidade">
                                                 <option value="">Selecione a unidade mais próxima</option>
-                                                <option>???</option>
+                                                <option id="sul" value="porto_alegre">Porto Alegre</option>
+                                                <option id="sul" value="curitiba">Curitiba</option>
+                                                <option id="sudeste" value="sao_paulo">São Paulo</option>
+                                                <option id="sudeste" value="rio_de_janeiro">Rio de Janeiro</option>
+                                                <option id="sudeste" value="belo_horizonte">Belo Horizonte</option>
+                                                <option id="centro-oeste" value="brasilia">Brasília</option>
+                                                <option id="nordeste" value="salvador">Salvador</option>
+                                                <option id="nordeste" value="recife">Recife</option>
+                                                <option id="norte" value="indisponivel">Nenhuma unidade disponível</option>
                                             </select>
                                         </div>
                                     </div>
@@ -122,12 +130,28 @@
             </div>
         </div>
         <script>
+            
+            //Próximo passo
             $(function () {
                 $('.next-step').click(function (event) {
                     event.preventDefault();
                     $(this).parents('.form-step').hide().next().show();
                 });
             });
+            
+            
+            
+            //Select unidades por região
+            
+            var $regiao = $( '#regiao' ),
+		$unidade = $( '#unidade' ),
+                $options = $unidade.find( 'option' );
+                
+            $regiao.on( 'change', function() {
+                    $unidade.html( $options.filter( '[id="' + this.value + '"]' ) );
+            } ).trigger( 'change' );
+                     
+                        
         </script>
     </body>
 </html>
