@@ -1,5 +1,6 @@
 <?php
 
+include('conn.php');
 
 
 // array para verificação de erros
@@ -269,49 +270,37 @@ function limpar($string) {
         
         // Grava no banco de dados
         
+            $SQL = $MySQLiconn->query("INSERT INTO lead (nome,email,telefone,regiao,unidade,data,score) VALUES ('".$lead['nome']."','".$lead['email']."','".$lead['telefone']."','".$lead['regiao']."','".$lead['unidade']."','".$lead['data_nascimento']."','".$lead['score']."')");
         
-        
-       
-       
-       
-       
-
-              
-              
-        /* Faz envio para api*/      
-        $envio= [
-            'nome' => $lead['nome'],
-            'email' => $lead['email'],
-            'telefone' => $lead['telefone'],
-            'regiao' => $lead['regiao'],
-            'unidade' => $lead['unidade'],
-            'data_nascimento' => $lead['data_nascimento'],
-            'score' => $lead['score'],
-            'token' => $lead['token'],
-        ];
-        
-        
-        
-        $url = 'http://api.actualsales.com.br/join-asbr/ti/lead';
-        $ch = curl_init($url);
-        
-        $postString = http_build_query($envio, '', '&');
-        
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        $response = curl_exec($ch);
-        curl_close($ch);
-       
-       
-       
-       
-        // Retorna Sucesso
-        $data['success'] = true;
-        $data['message'] = 'Cadastrado no banco com sucesso';
-        //$data['api'] = $response;
-        //$data['api'] = $data_nascimento.','.$score.','.$ano.','.$mes.','.$dia.','. $idade.','.$score;
+            if(!$SQL)
+            {
+              $data['success'] = false;
+              $data['errors']  = $MySQLiconn->error;
+            } else {
+                  
+            /* Faz envio para api*/      
+            
+             
+             $url = 'http://api.actualsales.com.br/join-asbr/ti/lead';
+             $ch = curl_init($url);
+             
+             $postString = http_build_query($lead, '', '&');
+             
+             curl_setopt($ch, CURLOPT_POST, 1);
+             curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
+             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+             
+             $response = curl_exec($ch);
+             curl_close($ch);
+            
+            
+            
+            
+             // Retorna Sucesso
+             $data['success'] = true;
+             $data['message'] = 'Cadastrado no banco com sucesso';
+             $data['api'] = $response;   
+            }
        
        
        
