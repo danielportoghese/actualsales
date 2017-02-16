@@ -28,10 +28,13 @@
     $unidade            = $_POST['unidade'];
     
     
-    
-// trata valor data nascimento
+// função para limpar strings    
+function limpar($string) {
+                $string = str_replace(' ', '-', $string); 
+                $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); 
 
-    //remove barras e espaços 
+                return preg_replace('/-+/', '-', $string); 
+            }   
     
     
     
@@ -86,9 +89,60 @@
             
             
             //remove caracteres desnecesários
+            $data_limpa = limpar($data_nascimento);
+            
+            $data_quant = strlen($data_limpa);
+            
+            if($data_quant != 8){
+                
+                $errors['data_nascimento'] = 'A data de nascimento deve estar no seguinte formato DD/MM/AAAA';
+                
+                
+            }
             
             
+            
+            //Corrigi data para envio
+            list($dia, $mes, $ano) = explode('/', $data_nascimento);
+            
+            $data_envio = $ano.'-'.$mes.'-'.$dia; 
+            
+                        
             //atribui nota a faixa etária
+            
+
+                
+                // Define data de inicio da contagem
+                $apartir = mktime(0, 0, 0, '11', '01', '2016');
+                
+                // Define timestamp da data de nacimento
+                $nascimento = mktime( 0, 0, 0, $mes, $dia, $ano);
+                
+                // Cálculo da idade 
+                $idade = floor((((($apartir - $nascimento) / 60) / 60) / 24) / 365.25);
+                
+                
+                // Define pontuação: 0 pontos entre 18 e 39 anos, -3 pontos entre 40 e 99 ano, -5 pontos se for menor de 18 ou com mais de 100 anos
+                
+                if ($idade >= 40 AND $idade <= 99){
+                  
+                    $score_data = 3;
+                 
+                }
+                
+                if ($idade < 18 OR $idade >= 100){
+                  
+                    $score_data = 5;
+                 
+                }
+                
+                if ($idade >= 18 AND $idade <= 39){
+                  
+                    $score_data = 0;
+                 
+                }
+               
+              
         
         }
     
@@ -149,7 +203,32 @@
     
         }else{
         
-        //atribui nota a unidade escolhida
+            // Atribui Score para Unidade    
+
+            if ($unidade == 'Porto Alegre' OR $unidade == 'Curitiba'){
+                $score_unidade = 2;
+            }
+            
+            if ($unidade == 'Rio de Janeiro' OR $unidade == 'Belo Horizonte'){
+               $score_unidade = 1;
+            }
+            
+            if ($unidade == 'Salvador' OR $unidade ==  'Recife' ){
+                $score_unidade = 4;
+            }
+            
+            if ($unidade == "Brasilia"){
+                $score_unidade = 3;
+            }
+            
+            if ($unidade == "INDISPONIVEL"){
+                $score_unidade = 5;
+            }
+            
+            if ($unidade == "Sao Paulo"){
+               $score_unidade = 0;
+            }
+
         
         }
     
@@ -163,17 +242,88 @@
         // Array de retorno caso existam erros
         $data['success'] = false;
         $data['errors']  = $errors;
+    
     } else {
         
-        // Grava dados
         
+        /*Cria score*/
+       
+        
+        
+        
+        $score = 10 - ((int)$score_data) - ((int)$score_unidade);
+        
+        
+        
+        /*Armazena dados no array lead*/
+        $lead = array('nome' => $nome,
+              'email' => $email,
+              'telefone' => $telefone,
+              'regiao' => $regiao,
+              'unidade' => $unidade,
+              'data_nascimento' => $data_envio,
+              'score' => $score,
+              'token' => '7ee51f14e813ed052bae1ae6bd159b4f'
+              
+              );
+        
+        // Grava no banco de dados
+        
+        
+        
+       
+       
+       
+       
+
+              
+              
+        /* Faz envio para api*/      
+        $envio= [
+            'nome' => $lead['nome'],
+            'email' => $lead['email'],
+            'telefone' => $lead['telefone'],
+            'regiao' => $lead['regiao'],
+            'unidade' => $lead['unidade'],
+            'data_nascimento' => $lead['data_nascimento'],
+            'score' => $lead['score'],
+            'token' => $lead['token'],
+        ];
+        
+        
+        
+        $url = 'http://api.actualsales.com.br/join-asbr/ti/lead';
+        $ch = curl_init($url);
+        
+        $postString = http_build_query($envio, '', '&');
+        
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+       
+       
+       
+       
         // Retorna Sucesso
-        
-       $data['success'] = true;
-       $data['message'] = $data_nascimento;
+        $data['success'] = true;
+        $data['message'] = 'Cadastrado no banco com sucesso';
+        //$data['api'] = $response;
+        //$data['api'] = $data_nascimento.','.$score.','.$ano.','.$mes.','.$dia.','. $idade.','.$score;
+       
+       
+       
+         
+       
+       
     
     }
        
 echo json_encode($data);
+
+
+
 
 ?>

@@ -79,11 +79,11 @@
                                             <label>Região</label>
                                             <select class="form-control" name="regiao" id="regiao">
                                                 <option value="">Selecione a sua região</option>
-                                                <option value="sul">Sul</option>
-                                                <option value="sudeste">Sudeste</option>
-                                                <option value="centro-oeste">Centro-Oeste</option>
-                                                <option value="nordeste">Nordeste</option>
-                                                <option value="norte">Norte</option>
+                                                <option value="Sul">Sul</option>
+                                                <option value="Sudeste">Sudeste</option>
+                                                <option value="Centro-Oeste">Centro-Oeste</option>
+                                                <option value="Nordeste">Nordeste</option>
+                                                <option value="Norte">Norte</option>
                                             </select>
                                         </div>
 
@@ -91,26 +91,26 @@
                                             <label>Unidade</label>
                                             <select class="form-control" name="unidade" id="unidade">
                                                 
-                                                <option id="norte" value="indisponivel">Nenhuma unidade disponível</option>
+                                                <option id="Norte" value="INDISPONIVEL">Nenhuma unidade disponível</option>
                                                 
-                                                <option id="centro-oeste" value="" selected>Selecione a unidade mais próxima</option>
-                                                <option id="centro-oeste" value="brasilia">Brasília</option>
-                                                
-                                                
-                                                <option id="sul" value="" selected>Selecione a unidade mais próxima</option> 
-                                                <option id="sul" value="curitiba">Curitiba</option>
-                                                <option id="sul" value="porto_alegre">Porto Alegre</option>
+                                                <option id="Centro-Oeste" value="" selected>Selecione a unidade mais próxima</option>
+                                                <option id="Centro-Oeste" value="Brasilia">Brasília</option>
                                                 
                                                 
-                                                <option id="nordeste" value="" selected>Selecione a unidade mais próxima</option>
-                                                <option id="nordeste" value="recife">Recife</option>
-                                                <option id="nordeste" value="salvador">Salvador</option>
+                                                <option id="Sul" value="" selected>Selecione a unidade mais próxima</option> 
+                                                <option id="Sul" value="Curitiba">Curitiba</option>
+                                                <option id="Sul" value="Porto Alegre">Porto Alegre</option>
+                                                
+                                                
+                                                <option id="Nordeste" value="" selected>Selecione a unidade mais próxima</option>
+                                                <option id="Nordeste" value="Recife">Recife</option>
+                                                <option id="Nordeste" value="Salvador">Salvador</option>
                                                 
                                                                                               
-                                                <option id="sudeste" value="belo_horizonte">Belo Horizonte</option>
-                                                <option id="sudeste" value="rio_de_janeiro">Rio de Janeiro</option>
-                                                <option id="sudeste" value="sao_paulo">São Paulo</option>
-                                                <option id="sudeste" value="" selected>Selecione a unidade mais próxima</option>
+                                                <option id="Sudeste" value="Belo Horizonte">Belo Horizonte</option>
+                                                <option id="Sudeste" value="Rio de Janeiro">Rio de Janeiro</option>
+                                                <option id="Sudeste" value="Sao Paulo">São Paulo</option>
+                                                <option id="Sudeste" value="" selected>Selecione a unidade mais próxima</option>
                                                 
                                                 
                                                 
@@ -252,7 +252,8 @@
 							  							   
                                 $('.form-step').hide();
                                 $('.sucesso').show();
-                                $('.mensagem').append('<div>' + data.message + '</div>'); 
+                                $('.mensagem').append('<div>' + data.message + '</div>');
+                                
                             
                             }
 								
