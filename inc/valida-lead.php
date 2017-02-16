@@ -41,6 +41,17 @@ function limpar($string) {
     
 // Validando entradas
     
+    // Verifica se cadastro já foi efetuado utilizando e-mail como base
+    
+    
+    $verifica = $MySQLiconn->query("SELECT * FROM lead WHERE email='".$email."'");
+    
+    if(mysqli_num_rows($verifica) > 0){
+        
+        $errors['email'] = 'E-mail já cadastrado';  
+    
+    }
+    
     
     //Verifica se campo nome foi preenchido 
     
