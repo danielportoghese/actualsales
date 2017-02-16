@@ -7,6 +7,8 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+        
     </head>
     <body>
         <div class="container">
@@ -39,7 +41,7 @@
 
                                         <div class="col-lg-6">
                                             <label>Data de Nascimento</label>
-                                            <input class="form-control" type="text" name="data_nascimento">
+                                            <input class="form-control data" type="text" name="data_nascimento" placeholder="31/12/1900">
                                         </div>
                                     </div>
 
@@ -51,7 +53,7 @@
 
                                         <div class="col-lg-6">
                                             <label>Telefone</label>
-                                            <input class="form-control" type="text" name="telefone">
+                                            <input class="form-control telefone" type="text" name="telefone">
                                         </div>
                                     </div>
 
@@ -88,29 +90,58 @@
                                         <div class="col-lg-6">
                                             <label>Unidade</label>
                                             <select class="form-control" name="unidade" id="unidade">
-                                                <option value="">Selecione a unidade mais próxima</option>
-                                                <option id="sul" value="porto_alegre">Porto Alegre</option>
-                                                <option id="sul" value="curitiba">Curitiba</option>
-                                                <option id="sudeste" value="sao_paulo">São Paulo</option>
-                                                <option id="sudeste" value="rio_de_janeiro">Rio de Janeiro</option>
-                                                <option id="sudeste" value="belo_horizonte">Belo Horizonte</option>
-                                                <option id="centro-oeste" value="brasilia">Brasília</option>
-                                                <option id="nordeste" value="salvador">Salvador</option>
-                                                <option id="nordeste" value="recife">Recife</option>
+                                                
                                                 <option id="norte" value="indisponivel">Nenhuma unidade disponível</option>
+                                                
+                                                <option id="centro-oeste" value="" selected>Selecione a unidade mais próxima</option>
+                                                <option id="centro-oeste" value="brasilia">Brasília</option>
+                                                
+                                                
+                                                <option id="sul" value="" selected>Selecione a unidade mais próxima</option> 
+                                                <option id="sul" value="curitiba">Curitiba</option>
+                                                <option id="sul" value="porto_alegre">Porto Alegre</option>
+                                                
+                                                
+                                                <option id="nordeste" value="" selected>Selecione a unidade mais próxima</option>
+                                                <option id="nordeste" value="recife">Recife</option>
+                                                <option id="nordeste" value="salvador">Salvador</option>
+                                                
+                                                                                              
+                                                <option id="sudeste" value="belo_horizonte">Belo Horizonte</option>
+                                                <option id="sudeste" value="rio_de_janeiro">Rio de Janeiro</option>
+                                                <option id="sudeste" value="sao_paulo">São Paulo</option>
+                                                <option id="sudeste" value="" selected>Selecione a unidade mais próxima</option>
+                                                
+                                                
+                                                
+                                                
                                             </select>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <button type="submit" class="btn btn-lg btn-info next-step">Enviar</button>
+                                         <button type="submit" class="btn btn-lg btn-info prev-step">Voltar</button>
+                                        <button type="submit" class="btn btn-lg btn-info enviar">Enviar</button>
                                     </div>
                                 </fieldset>
                             </div>
                         </div>
+                        
+                        <div id="erro" class="erro" style="display:none">
+                            <div class="panel panel-info">
+                                <div class="panel-heading" style="background: #d61414">
+                                    <div class="panel-title" style="color:#fff">
+                                        Houve um ou mais erros no seu cadastro
+                                    </div>
+                                </div>
+                                <div class="panel-body panel-erro">
+                                   <!-- Mensagem de erro aparece aqui-->
+                                </div>
+                            </div>
+                        </div>
                     </form>
 
-                    <div id="step_sucesso" class="form-step" style="display:none">
+                    <div id="step_sucesso" class="sucesso" style="display:none">
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 <div class="panel-title">
@@ -119,6 +150,7 @@
                             </div>
                             <div class="panel-body">
                                 Em breve você receberá uma ligação com mais informações!
+                                <div class="mensaggem"></div>
                             </div>
                         </div>
                     </div>
@@ -131,11 +163,106 @@
         </div>
         <script>
             
-            //Próximo passo
+          
             $(function () {
+                
+                //Mascaras input
+                $('.data').mask('00/00/0000', {reverse: false});
+                $('.telefone').mask('(99) 999999-9999', {reverse: false});
+                               
+                
+                //Próximo passo
                 $('.next-step').click(function (event) {
                     event.preventDefault();
                     $(this).parents('.form-step').hide().next().show();
+                });
+                
+                $('.prev-step').click(function (event) {
+                    event.preventDefault();
+                    $(this).parents('.form-step').hide().prev().show();
+                    $('.erro').hide();
+                    $('.panel-erro').empty();
+                });
+                
+                //Enviar dados
+                 $('.enviar').click(function (event) {
+                    event.preventDefault();
+                    
+                    $('.erro').hide();
+                    $('.panel-erro').empty();
+                    
+                    var formData = {
+			'nome'              : $('input[name=nome]').val(),
+			'data_nascimento'   : $('input[name=data_nascimento]').val(),
+			'email'             : $('input[name=email]').val(),
+			'telefone'          : $('input[name=telefone]').val(),
+			'regiao'            : $('select[name=regiao').val(),
+			'unidade'           : $('select[name=unidade]').val()
+								
+		    };
+                    
+                    $.ajax({
+			type: 'POST', // define post para envio
+			url: 'inc/valida-lead.php', // url de validação
+			data: formData, // dados do objeto
+			dataType: 'json', // tipo de resposta esperada do servidor
+			encode: true
+                    })
+                    
+                    .done(function(data) {
+
+			console.log(data);
+								
+                            if ( ! data.success) {
+				
+                               if (data.errors.nome) {
+                                    $('.erro').show();
+                                    $('.panel-erro').append('<div>' + data.errors.nome + '</div>'); 
+                               }
+                               
+                               if (data.errors.data_nascimento) {
+                                    $('.erro').show();
+                                    $('.panel-erro').append('<div>' + data.errors.data_nascimento + '</div>'); 
+                               }
+                               
+                               if (data.errors.email) {
+                                    $('.erro').show();
+                                    $('.panel-erro').append('<div>' + data.errors.email + '</div>'); 
+                               }
+                                
+                               if (data.errors.telefone) {
+                                    $('.erro').show();
+                                    $('.panel-erro').append('<div>' + data.errors.telefone + '</div>'); 
+                               }
+                               
+                               if (data.errors.regiao) {
+                                    $('.erro').show();
+                                    $('.panel-erro').append('<div>' + data.errors.regiao + '</div>'); 
+                               }
+                               
+                               if (data.errors.unidade) {
+                                    $('.erro').show();
+                                    $('.panel-erro').append('<div>' + data.errors.unidade + '</div>'); 
+                               }
+                               
+                               
+                            } else {
+											
+			    // Envia dados pela api							
+							  							   
+                                $('.form-step').hide();
+                                $('.sucesso').show();
+                                $('.mensagem').append('<div>' + data.message + '</div>'); 
+                            
+                            }
+								
+                    });
+                    
+                    
+                    
+                    
+                    
+                    
                 });
             });
             
@@ -150,6 +277,11 @@
             $regiao.on( 'change', function() {
                     $unidade.html( $options.filter( '[id="' + this.value + '"]' ) );
             } ).trigger( 'change' );
+            
+            
+            
+            
+            
                      
                         
         </script>
